@@ -1,0 +1,70 @@
+﻿region,pipeline_name,start_time,end_time,run_status
+España,DWH-Carga Clientes,29/09/2025 1:50,29/09/2025 2:04,3
+España,DMC-Ficha clientes,29/09/2025 5:56,29/09/2025 6:18,0
+España,DWH-Carga Polizas,29/09/2025 0:03,29/09/2025 0:16,0
+España,DWH-Carga Siniestros,29/09/2025 23:44,30/09/2025 0:31,1
+España,DMC-Valor Cliente,29/09/2025 14:17,29/09/2025 14:55,0
+España,DMS-Propension Fraude,29/09/2025 21:44,29/09/2025 22:29,1
+España,DMF-Provisiones,29/09/2025 6:22,29/09/2025 6:46,0
+España,DWH-Carga Clientes,30/09/2025 21:23,30/09/2025 22:22,1
+España,DMC-Ficha clientes,30/09/2025 11:03,30/09/2025 11:55,1
+España,DWH-Carga Polizas,30/09/2025 9:01,30/09/2025 9:48,0
+España,DWH-Carga Siniestros,30/09/2025 17:24,30/09/2025 18:16,1
+España,DMC-Valor Cliente,30/09/2025 2:42,30/09/2025 3:02,1
+España,DMS-Propension Fraude,30/09/2025 22:03,30/09/2025 22:39,3
+España,DMF-Provisiones,30/09/2025 7:19,30/09/2025 7:32,1
+España,DWH-Carga Clientes,01/10/2025 11:32,01/10/2025 12:23,1
+España,DMC-Ficha clientes,01/10/2025 0:34,01/10/2025 1:08,3
+España,DWH-Carga Polizas,01/10/2025 12:11,01/10/2025 13:11,1
+España,DWH-Carga Siniestros,01/10/2025 15:30,01/10/2025 15:58,0
+España,DMC-Valor Cliente,01/10/2025 18:44,01/10/2025 19:39,1
+España,DMS-Propension Fraude,01/10/2025 3:41,01/10/2025 3:51,1
+España,DMF-Provisiones,01/10/2025 0:50,01/10/2025 1:13,3
+España,DWH-Carga Clientes,02/10/2025 2:10,02/10/2025 2:24,0
+España,DMC-Ficha clientes,02/10/2025 10:54,02/10/2025 11:24,3
+España,DWH-Carga Polizas,02/10/2025 11:09,02/10/2025 12:09,3
+España,DWH-Carga Siniestros,02/10/2025 2:02,02/10/2025 2:14,1
+España,DMC-Valor Cliente,02/10/2025 16:36,02/10/2025 17:19,1
+España,DMS-Propension Fraude,02/10/2025 21:26,02/10/2025 21:39,3
+España,DMF-Provisiones,02/10/2025 9:45,02/10/2025 10:06,1
+España,DWH-Carga Clientes,03/10/2025 19:18,03/10/2025 19:36,1
+España,DMC-Ficha clientes,03/10/2025 22:40,03/10/2025 22:51,0
+España,DWH-Carga Polizas,03/10/2025 11:23,03/10/2025 11:55,0
+España,DWH-Carga Siniestros,03/10/2025 15:13,03/10/2025 15:37,0
+España,DMC-Valor Cliente,03/10/2025 9:38,03/10/2025 10:08,3
+España,DMS-Propension Fraude,03/10/2025 4:44,03/10/2025 5:11,0
+España,DMF-Provisiones,03/10/2025 14:49,03/10/2025 15:24,3
+España,DWH-Carga Clientes,04/10/2025 13:34,04/10/2025 14:00,3
+España,DMC-Ficha clientes,04/10/2025 7:23,04/10/2025 7:35,1
+España,DWH-Carga Polizas,04/10/2025 13:09,04/10/2025 14:08,3
+España,DWH-Carga Siniestros,04/10/2025 3:54,04/10/2025 4:39,3
+España,DMC-Valor Cliente,04/10/2025 10:14,04/10/2025 10:59,0
+España,DMS-Propension Fraude,04/10/2025 11:02,04/10/2025 11:22,3
+España,DMF-Provisiones,04/10/2025 13:27,04/10/2025 14:05,3
+España,DWH-Carga Clientes,05/10/2025 10:44,05/10/2025 11:01,1
+España,DMC-Ficha clientes,05/10/2025 19:49,05/10/2025 20:20,1
+España,DWH-Carga Polizas,05/10/2025 11:05,05/10/2025 11:25,1
+España,DWH-Carga Siniestros,05/10/2025 12:00,05/10/2025 12:46,1
+España,DMC-Valor Cliente,05/10/2025 13:01,05/10/2025 15:35,1
+España,DMS-Propension Fraude,05/10/2025 15:11,05/10/2025 15:46,1
+España,DMF-Provisiones,05/10/2025 13:07,05/10/2025 13:39,1
+España,DWH-Carga Clientes,06/10/2025 3:16,06/10/2025 4:09,1
+España,DMC-Ficha clientes,06/10/2025 14:04,06/10/2025 14:14,0
+España,DWH-Carga Polizas,06/10/2025 18:30,06/10/2025 18:49,1
+España,DWH-Carga Siniestros,06/10/2025 16:51,06/10/2025 17:40,0
+España,DMC-Valor Cliente,06/10/2025 22:04,06/10/2025 22:47,0
+España,DMS-Propension Fraude,06/10/2025 13:19,06/10/2025 13:46,3
+España,DMF-Provisiones,06/10/2025 22:19,06/10/2025 23:19,3
+España,DWH-Carga Clientes,07/10/2025 22:25,07/10/2025 22:58,1
+España,DMC-Ficha clientes,07/10/2025 4:54,07/10/2025 5:52,3
+España,DWH-Carga Polizas,07/10/2025 18:48,07/10/2025 19:32,0
+España,DWH-Carga Siniestros,07/10/2025 8:41,07/10/2025 9:21,3
+España,DMC-Valor Cliente,07/10/2025 1:18,07/10/2025 1:39,3
+España,DMS-Propension Fraude,07/10/2025 10:40,07/10/2025 11:14,0
+España,DMF-Provisiones,07/10/2025 14:39,07/10/2025 15:22,0
+España,DWH-Carga Clientes,08/10/2025 20:20,08/10/2025 21:08,1
+España,DMC-Ficha clientes,09/10/2025 3:00,09/10/2025 3:10,2
+España,DWH-Carga Polizas,08/10/2025 21:48,08/10/2025 22:32,0
+España,DWH-Carga Siniestros,08/10/2025 22:41,08/10/2025 23:01,3
+España,DMC-Valor Cliente,09/10/2025 1:18,09/10/2025 1:39,3
+España,DMF-Provisiones,08/10/2025 4:00,,4

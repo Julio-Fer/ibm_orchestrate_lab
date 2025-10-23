@@ -1,0 +1,211 @@
+PASOS PARA CONSTRUCCIÓN MCP SERVER
+Desde Conda (Anaconda prompt)
+
+PASO 1: Accede a la carpeta del proyecto
+cd C:\Users\abmorena\Documents\Projects\MCPServerLab
+
+PASO 2: Activa el entorno virtual
+conda env list
+
+conda activate mcp_server_env
+
+PASO 3: Comprobar que el Docker está levantado
+docker --versión
+
+PASO 4: Asegúrate que en la carpeta del proyecto está el archivo Dockerfile
+dir
+
+PASO 5: Construir la imagen Docker
+-- Arrancar Docker Desktop: Busca en el menú inicio “Docker Desktop” y ábrelo como administrador
+A continuación:
+docker build -t mcpserverlab-app .
+
+PASO 6: Ejecutar el Docker
+Para ver las imagenes y contenedores existentes: docker images
+Para ver dockers corriendo: docker ps
+
+docker run -it --rm -p 5000:5000 mcpserverlab-app
+
+-it para que el contenedor sea interactivo (útil si tu app pide input o muestra salida).
+--rm para que se borre el contenedor al salir.
+
+
+Para convertir un md en un HTML.
+Desde Python:
+import markdown (en caso de no tenerse, salir de Python y desde consola pip install markdown)
+
+with open('readme.md', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+html = markdown.markdown(text)
+
+with open('readme.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+
+with open('knowledge_document.md', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+html = markdown.markdown(text)
+
+with open('knowledge_document.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+
+
+
+Para exportar la imagen Docker como un archivo .tar (y proceder a su distribución)
+Comprobar que la imagen está: docker images
+Salvarlo como archivo .tar: docker save -o mcpserverlab-app.tar mcpserverlab-app
+Comprimirlo: tar -czf mcpserverlab-app.tar.gz mcpserverlab-app.tar
+
+PASOS PARA QUE MCP SERVER SEA VISIBLE DESDE IBM ORCHESTRATOR
+
+Si ejecutas tu MCP server localmente (host='0.0.0.0', port=5000), IBM Orchestrate no podrá acceder directamente a localhost. Para que Orchestrate lo vea, necesitas un túnel HTTPS:
+
+OPCIÓN NGROK
+
+Instala ngrok: https://ngrok.com/download
+
+Ejecuta ngrok para exponer tu puerto 5000:
+    
+    ngrok authtoken 34QLjT5aQSCFw5FxLhpDJVQFpf2_2hM58gBRCUjbQ5iGbew58
+
+    ngrok http 5000
+
+
+Ngrok te dará una URL pública, por ejemplo:
+
+    https://bonita-adjoining-uncontentiously.ngrok-free.dev -> http://localhost:5000
+
+Esta será la URL base que usarás en Orchestrate.
+
+2️⃣ Verifica que tu MCP server funcione
+
+Abre un navegador o Postman y prueba (NO FUNCIONA POR BLOQUEO DE FORTICLIENT)
+
+    Descubrimiento de tools:
+
+        GET https://bonita-adjoining-uncontentiously.ngrok-free.dev/mcp-tools
+
+
+    Deberías recibir un JSON con la lista de tus tools (estado_ejecucion, estadisticas_ejecucion, nivel_actualizacion).
+
+    Endpoints individuales:
+
+        GET https://abcd1234.ngrok.io/estado-ejecucion?region=US&pipeline=pipeline1&dia=2025-10-22
+
+
+Otros temas
+Para que los notebooks se abran y guarden desde tu carpeta de proyecto
+Desde Anaconda Prompt ejecutar:
+cd C:\Users\abmorena\Documents\Projects\MCPServerLab
+jupyter notebook
+
+Pruebas
+Para ver que MCP server está corriendo correctamente:
+http://localhost:5000/mcp-tools
+
+Pruebas desde localhost:
+
+1.- http://localhost:5000/estado-ejecucion?region=España&pipeline=DWH-Carga%20Clientes&dia=2025-09-25
+2.- http://localhost:5000/estado-ejecucion?region=Espa%C3%B1a&pipeline=DMC-Valor%20Cliente&dia=2025-10-06
+3.- http://localhost:5000/estadisticas-ejecucion?region=Espa%C3%B1a&pipeline=DWH-Carga%20Polizas&dia_inicio=2025-09-29&dia_fin=2025-10-08
+4.- http://localhost:5000/estadisticas-ejecucion?region=Espa%C3%B1a&pipeline=DMF-Provisiones&dia_inicio=2025-10-01&dia_fin=2025-10-05
+5.- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&pipeline=DMC-Ficha%20clientes&dia=2025-10-07&dependencias_pipeline=DWH-Carga%20Clientes&dependencias_pipeline=DWH-Carga%20Polizas&dependencias_pipeline=DWH-Carga%20Siniestros&dependencias_pipeline=DMC-Valor%20Cliente
+
+Datos de carga del dia 7 de Octubre:
+España,DWH-Carga Clientes,07/10/2025 22:25,07/10/2025 22:58,1
+España,DMC-Ficha clientes,07/10/2025 4:54,07/10/2025 5:52,3
+España,DWH-Carga Polizas,07/10/2025 18:48,07/10/2025 19:32,0
+España,DWH-Carga Siniestros,07/10/2025 8:41,07/10/2025 9:21,3
+España,DMC-Valor Cliente,07/10/2025 1:18,07/10/2025 1:39,3
+España,DMS-Propension Fraude,07/10/2025 10:40,07/10/2025 11:14,0
+España,DMF-Provisiones,07/10/2025 14:39,07/10/2025 15:22,0
+
+a) La Ficha de cliente depende de la carga de clientes. Esta carga, aunque acabo bien (status 1), comenzó antes de que finalizase la carga de clientes.
+b) La Carga de Polizas falló.
+c) La Carga de Siniestros no acabó o no se ejecutó
+d) El Valor del cliente no se ejecutó
+
+Respuesta:
+[
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DWH-Carga Clientes",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 3
+  },
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DWH-Carga Polizas",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 0
+  },
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DWH-Carga Siniestros",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 2
+  },
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DMC-Valor Cliente",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 2
+  }
+]
+
+6.- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&pipeline=DWH-Carga%20Siniestros&dia=2025-10-07&dependencias_pipeline=DWH-Carga%20Clientes&dependencias_pipeline=DWH-Carga%20Polizas
+
+7.- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&pipeline=DWH-Carga%20Siniestros&dia=2025-10-05&dependencias_pipeline=DWH-Carga%20Clientes&dependencias_pipeline=DWH-Carga%20Polizas
+
+Siniestros depende de Polizas y Clientes, y ambos se ejecutaron bien.
+[
+  {
+    "Pipeline": "DWH-Carga Siniestros",
+    "Pipeline del que depende": "DWH-Carga Clientes",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 1
+  },
+  {
+    "Pipeline": "DWH-Carga Siniestros",
+    "Pipeline del que depende": "DWH-Carga Polizas",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 1
+  }
+]
+
+8 .- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&pipeline=DMC-Ficha%20clientes&dia=2025-10-05&dependencias_pipeline=DWH-Carga%20Clientes&dependencias_pipeline=DWH-Carga%20Polizas&dependencias_pipeline=DWH-Carga%20Siniestros&dependencias_pipeline=DMC-Valor%20Cliente
+Ficha de Clientes depende de Clientes, Polizas, Siniestros y Valor del Cliente.
+Ese dia todo fue bien
+
+[
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DWH-Carga Clientes",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 1
+  },
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DWH-Carga Polizas",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 1
+  },
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DWH-Carga Siniestros",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 1
+  },
+  {
+    "Pipeline": "DMC-Ficha clientes",
+    "Pipeline del que depende": "DMC-Valor Cliente",
+    "Region": "Espa\u00f1a",
+    "Situaci\u00f3n": 1
+  }
+]
+
+Probar a través del túnel ngrok
+
+en Powershell: curl.exe -k https://bonita-adjoining-uncontentiously.ngrok-free.dev/mcp-tools
+

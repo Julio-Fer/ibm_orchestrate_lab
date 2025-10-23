@@ -1,0 +1,135 @@
+<h1>🧪 Laboratorio: Monitorización de Pipelines DataStage con WatsonX Orchestrate y MCP Server</h1>
+<h2>Objetivo</h2>
+<p>Crear un agente en IBM WatsonX Orchestrate que responda a preguntas de usuarios sobre la ejecución de pipelines de DataStage, consultando un MCP Server que accede a un fichero CSV con los datos de ejecución. El agente debe interpretar dependencias entre pipelines y regiones, usando un documento de conocimiento en Markdown.</p>
+<hr />
+<h2>🗂 Estructura del laboratorio</h2>
+<ul>
+<li><strong>knowledge_document.md</strong>: Documento de conocimiento con regiones, pipelines y dependencias.</li>
+<li><strong>ejecuciones_pipelines.csv</strong>: Fichero con los datos de ejecución de pipelines.</li>
+<li><strong>mcp_server.py</strong>: Servidor MCP con endpoints REST para consulta de ejecuciones.</li>
+<li><strong>requirements.txt</strong>: Dependencias Python (Flask, pandas).</li>
+</ul>
+<hr />
+<h2>🌍 Regiones Monitorizadas</h2>
+<ul>
+<li>España</li>
+<li>México</li>
+<li>Italia</li>
+<li>Francia</li>
+<li>Colombia</li>
+</ul>
+<h2>🛠 Pipelines Disponibles</h2>
+<ol>
+<li>DWH-Carga Clientes</li>
+<li>DMC-Ficha clientes</li>
+<li>DWH-Carga Polizas</li>
+<li>DWH-Carga Siniestros</li>
+<li>DMC-Valor Cliente</li>
+<li>DMS-Propension Fraude</li>
+<li>DMF-Provisiones</li>
+</ol>
+<h2>🔗 Dependencias entre Pipelines</h2>
+<p><strong>DMC-Ficha clientes</strong> depende de:</p>
+<ul>
+<li>DWH-Carga Clientes</li>
+<li>DWH-Carga Polizas</li>
+<li>DWH-Carga Siniestros</li>
+<li>DMC-Valor Cliente</li>
+</ul>
+<p><strong>DWH-Carga Polizas</strong> depende de:</p>
+<ul>
+<li>DWH-Carga Clientes</li>
+</ul>
+<p><strong>DWH-Carga Siniestros</strong> depende de:</p>
+<ul>
+<li>DWH-Carga Clientes</li>
+<li>DWH-Carga Polizas</li>
+</ul>
+<p><strong>DMC-Valor Cliente</strong> depende de:</p>
+<ul>
+<li>DWH-Carga Clientes</li>
+<li>DWH-Carga Polizas</li>
+<li>DWH-Carga Siniestros</li>
+</ul>
+<p><strong>DMS-Propension Fraude</strong> depende de:</p>
+<ul>
+<li>DWH-Carga Siniestros</li>
+</ul>
+<p><strong>DMF-Provisiones</strong> depende de:</p>
+<ul>
+<li>DWH-Carga Polizas</li>
+<li>DWH-Carga Siniestros</li>
+</ul>
+<hr />
+<h2>📊 Estados de Ejecución (<code>run_status</code>)</h2>
+<ul>
+<li><strong>0 (Fallido):</strong> El paso o el trabajo terminó con error.</li>
+<li><strong>1 (Exitoso):</strong> El paso o el trabajo se completó correctamente.</li>
+<li><strong>2 (Reintento):</strong> El paso falló, pero está configurado para reintentar.</li>
+<li><strong>3 (Cancelado):</strong> El trabajo fue cancelado manualmente o por alguna condición.</li>
+<li><strong>4 (En progreso):</strong> El paso está actualmente en ejecución.</li>
+</ul>
+<hr />
+<h2>🧱 Componentes</h2>
+<h3>🐳 MCP Server</h3>
+<p>El MCP Server expone tres endpoints REST y consulta el fichero <code>ejecuciones_pipelines.csv</code>. <strong>No implementa lógica de dependencias</strong>; esta lógica la gestiona el agente en WatsonX Orchestrate usando el documento de conocimiento.</p>
+<h4>📁 Archivo de entrada</h4>
+<ul>
+<li><code>ejecuciones_pipelines.csv</code></li>
+<li>Columnas: <code>region</code>, <code>pipeline_name</code>, <code>start_time</code>, <code>end_time</code>, <code>run_status</code></li>
+</ul>
+<h4>Endpoints REST</h4>
+<h5>1. <code>/estado-ejecucion</code></h5>
+<p>Consulta el estado de ejecución de una pipeline en una región y día específico.</p>
+<ul>
+<li><strong>Parámetros de entrada:</strong> <code>region</code>, <code>pipeline</code>, <code>dia</code></li>
+<li><strong>Respuesta:</strong> <code>Region</code>, <code>Pipeline</code>, <code>Dia</code>, <code>Estado de ejecución</code>, <code>Log</code></li>
+</ul>
+<h5>2. <code>/estadisticas-ejecucion</code></h5>
+<p>Devuelve estadísticas de ejecución en un intervalo de fechas.</p>
+<ul>
+<li><strong>Parámetros de entrada:</strong> <code>region</code>, <code>pipeline</code>, <code>dia_inicio</code>, <code>dia_fin</code></li>
+<li><strong>Respuesta:</strong> Estadísticas generales y por estado (duración, horarios, etc.)</li>
+</ul>
+<h5>3. <code>/nivel-actualizacion</code></h5>
+<p>Verifica si las dependencias de una pipeline se cumplieron correctamente ese día.</p>
+<ul>
+<li><strong>Parámetros de entrada:</strong> <code>region</code>, <code>pipeline</code>, <code>dependencias_pipeline</code>, <code>dia</code></li>
+<li>
+<p><strong>Respuesta:</strong> Para cada dependencia, indica si se cumplió, falló, no finalizó o fue fuera de orden.</p>
+<p>** Situaciones de Salida:**</p>
+<p><strong>0 (Proceso previo fallo)</strong>  La ejecución del pipeline del que depende fallo ese día (run_status del pipeline del que depende fue igual a 0).</p>
+<p><strong>1 (Dependencia satisfactoria):</strong> La ejecución del pipeline del que depende acabo satisfactoriamente (run_status del pipeline del que depende fue igual a 1) y la fecha de fin del pipeline del que depende es anterior o igual a la fecha de inicio del pipeline dependiente.</p>
+<p><strong>2 (Dependencia no finalizo o fue cancelada):</strong> La ejecución del pipeline del que depende no finalizó ese día o fue cancelado (run_status del pipeline del que depende fue igual a 2, 3 o 4).</p>
+<p><strong>3 (Proceso previo finalizó bien pero no en tiempo):</strong> La ejecución del pipeline del que depende acabo satisfactoriamente (run_status del pipeline del que depende fue igual a 1) y la fecha de fin del pipeline del que depende es posterior a la fecha de inicio del pipeline dependiente.</p>
+</li>
+</ul>
+<hr />
+<h3>🚀 Instalación y Ejecución</h3>
+<h4>🐳 Instala dependencias:</h4>
+<p><code>`bash
+pip install -r requirements.txt</code></p>
+<h4>🐳 Construcción de la imagen</h4>
+<p><code>`bash
+docker build -t mcp-server .</code></p>
+<h4>🐳 Ejecutar la imagen</h4>
+<p><code>`bash
+docker run -d -p 5000:5000 --name mcp-server mcp-server:latest</code></p>
+<h3>🚀 Pruebas</h3>
+<p>En local</p>
+<p>Prueba 1.- http://localhost:5000/estado-ejecucion?region=España&amp;pipeline=DWH-Carga%20Clientes&amp;dia=2025-09-25</p>
+<p>Prueba 2.- http://localhost:5000/estado-ejecucion?region=Espa%C3%B1a&amp;pipeline=DMC-Valor%20Cliente&amp;dia=2025-10-06</p>
+<p>Prueba 3.- http://localhost:5000/estadisticas-ejecucion?region=Espa%C3%B1a&amp;pipeline=DWH-Carga%20Polizas&amp;dia_inicio=2025-09-29&amp;dia_fin=2025-10-08</p>
+<p>Prueba 4.- http://localhost:5000/estadisticas-ejecucion?region=Espa%C3%B1a&amp;pipeline=DMF-Provisiones&amp;dia_inicio=2025-10-01&amp;dia_fin=2025-10-05</p>
+<p>Prueba 5.- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&amp;pipeline=DMC-Ficha%20clientes&amp;dia=2025-10-07&amp;dependencias_pipeline=DWH-Carga%20Clientes&amp;dependencias_pipeline=DWH-Carga%20Polizas&amp;dependencias_pipeline=DWH-Carga%20Siniestros&amp;dependencias_pipeline=DMC-Valor%20Cliente</p>
+<p>Prueba 6.- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&amp;pipeline=DWH-Carga%20Siniestros&amp;dia=2025-10-07&amp;dependencias_pipeline=DWH-Carga%20Clientes&amp;dependencias_pipeline=DWH-Carga%20Polizas</p>
+<p>Prueba 7.- http://localhost:5000/nivel-actualizacion?region=Espa%C3%B1a&amp;pipeline=DWH-Carga%20Siniestros&amp;dia=2025-10-05&amp;dependencias_pipeline=DWH-Carga%20Clientes&amp;dependencias_pipeline=DWH-Carga%20Polizas</p>
+<h3>2. Agente en WatsonX Orchestrate</h3>
+<p>El agente:
+- Recibe preguntas de usuarios sobre la ejecución de pipelines
+- Consulta el MCP Server vía REST
+- Usa un documento de conocimiento en formato Markdown para entender:
+  - Regiones disponibles
+  - Pipelines disponibles
+  - Dependencias entre pipelines</p>
+<hr />
